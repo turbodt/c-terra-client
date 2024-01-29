@@ -1,0 +1,14 @@
+#ifndef TRCL_REQUESTS_SHARED_H
+#define TRCL_REQUESTS_SHARED_H
+
+
+
+enum TRCLResponseStatus {
+    TRCL_RESPONSE_STATUS__SUCCESS,
+    TRCL_RESPONSE_STATUS__FAIL,
+};
+
+
+
+
+#endif
