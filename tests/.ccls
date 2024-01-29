@@ -1,0 +1,4 @@
+clang
+%c -I../include
+%c -I../external/curl/include
+-std=c11
