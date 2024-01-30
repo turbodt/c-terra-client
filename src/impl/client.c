@@ -27,6 +27,7 @@ Client * trcl_client_alloc(ClientConfig const * config) {
         .get_last_exception = trcl_client_get_last_exception,
         .get_last_exception_code = trcl_client_get_last_exception_code,
         .get_user_info = trcl_client_get_user_info,
+        .get_subscribed_users_list = trcl_client_get_subscribed_users_list,
     };
 
     return (Client *) client;

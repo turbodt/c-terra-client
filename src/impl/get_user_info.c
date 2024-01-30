@@ -2,7 +2,6 @@
 #include "../requests/user-info.h"
 #include "../models.h"
 #include "../base.h"
-#include <curl/curl.h>
 #include <string.h>
 
 

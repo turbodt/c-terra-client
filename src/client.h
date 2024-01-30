@@ -19,6 +19,7 @@ struct TRCLClient {
     TRCLException const * (*get_last_exception)(struct TRCLClient const *);
     TRCLExceptionCode (*get_last_exception_code)(struct TRCLClient const *);
     struct TRCLUserInfo * (*get_user_info)(struct TRCLClient *, TRCLUserId);
+    struct TRCLListUserInfo * (*get_subscribed_users_list)(struct TRCLClient *);
 };
 
 

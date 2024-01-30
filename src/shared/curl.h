@@ -5,6 +5,12 @@
 #include <stddef.h>
 
 
+typedef struct curl_write_char_buffer_t {
+    char *data;
+    size_t size;
+} curl_write_char_buffer_t;
+
+
 struct curl_slist * curl_slist_append_kv(
     struct curl_slist *,
     char const *,
