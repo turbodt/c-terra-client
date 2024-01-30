@@ -1,15 +1,10 @@
 #include "../test_suite_001.h"
 #include "../base.h"
+#include "../utils.h"
 #include "terra-cli.h"
-#include <string.h>
 #include <curl/curl.h>
-
-
-static struct TRCLClientConfig const config = {
-    .api_key = "",
-    .dev_id = "",
-    .base_url = "https://api.tryterra.co/v2/",
-};
+#include <string.h>
+#include <stdlib.h>
 
 
 TEST_H(test_001);
@@ -25,8 +20,12 @@ void (*test_suite_001_get_test(size_t index))(void) {
     return tests[index];
 };
 
+
 TEST(test_001, {
     curl_global_init(CURL_GLOBAL_ALL);
+
+    struct TRCLClientConfig const config = get_env_config();
+
     struct TRCLClient * client = trcl_client_alloc(&config);
 
     struct TRCLUserInfo * user_info = client->get_user_info(
