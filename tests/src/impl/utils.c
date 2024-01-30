@@ -14,3 +14,24 @@ struct TRCLClientConfig get_env_config(void) {
     ASSERT_NOT_NULL(config.base_url);
     return config;
 };
+
+
+void log_user_info(struct TRCLUserInfo const * user_info) {
+    LOG(
+        "%s\t%-32s\t%d\t%s\t%s\t%s\t%s\n",
+        user_info->user_id,
+        user_info->reference_id,
+        user_info->is_active,
+        user_info->provider,
+        user_info->scopes,
+        user_info->created_at,
+        user_info->last_webhook_update_at
+    );
+}
+
+
+void log_list_user_info(struct TRCLListUserInfo const *list) {
+    for (size_t i = 0; i < list->count; i++) {
+        log_user_info(&list->values[i]);
+    }
+};

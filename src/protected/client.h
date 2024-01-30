@@ -21,6 +21,7 @@ typedef struct ClientProtected {
 
 
 struct TRCLUserInfo * trcl_client_get_user_info(Client *, TRCLUserId);
+struct TRCLListUserInfo * trcl_client_get_subscribed_users_list(Client *);
 
 
 #endif

@@ -26,13 +26,8 @@ size_t curl_response_write_text(
     void *stream
 ) {
 
-    struct write_result_t {
-        char *data;
-        int size;
-    };
-
     size_t realsize = size * nmemb;
-    struct write_result_t *mem = (struct write_result_t *)stream;
+    curl_write_char_buffer_t *mem = (curl_write_char_buffer_t *)stream;
 
     mem->data = TRCL_REALLOC(mem->data, char, mem->size + realsize + 1);
 
@@ -51,26 +46,22 @@ size_t curl_response_write_json(
     void *stream
 ) {
 
-    struct write_result_t {
-        char *data;
-        int size;
-    };
-
-    struct write_result_t result_text = {.data = NULL, .size=0};
-    size_t realsize = curl_response_write_text(content, size, nmemb, &result_text);
+    curl_write_char_buffer_t buffer = {.data = NULL, .size=0};
+    size_t realsize = curl_response_write_text(content, size, nmemb, &buffer);
 
     json_t **root = (json_t **) stream;
     json_error_t error;
 
-    *root = json_loads(result_text.data, 0, &error);
+    *root = json_loads(buffer.data, 0, &error);
     if(IS_NULL(*root)) {
-        LOG("json error: on line %d: %s", error.line, error.text);
-        LOG("readed: %zu", realsize);
-        LOG("json source:\n%s", result_text.data);
+        LOG("json error: on line %d: %s\n", error.line, error.text);
+        LOG("readed: %zu\n", realsize);
+        LOG("nmemb: %zu\n", nmemb);
+        LOG("json source:\n%s\n", buffer.data);
         goto ErrorParsingJson;
     }
 
 ErrorParsingJson:
-    TRCL_FREE(result_text.data);
+    TRCL_FREE(buffer.data);
     return realsize;
 };

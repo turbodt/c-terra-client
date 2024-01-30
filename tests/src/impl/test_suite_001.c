@@ -8,10 +8,12 @@
 
 
 TEST_H(test_001);
+TEST_H(test_002);
 
 
 static void (*tests[])(void) = {
     TEST_NAME(test_001),
+    TEST_NAME(test_002),
     NULL
 };
 
@@ -36,18 +38,37 @@ TEST(test_001, {
     ASSERT_FALSE(client->get_last_exception_code(client));
 
     LOG("\n\n");
-    LOG(
-        "%s\t%-15s\t%d\t%s\t%s\t%s\t%s\n",
-        user_info->user_id,
-        user_info->reference_id,
-        user_info->is_active,
-        user_info->provider,
-        user_info->scopes,
-        user_info->created_at,
-        user_info->last_webhook_update_at
-    );
+    log_user_info(user_info);
 
     trcl_model_user_info_destroy(user_info);
+    client->destroy(client);
+    curl_global_cleanup();
+});
+
+
+TEST(test_002, {
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    struct TRCLClientConfig const config = get_env_config();
+
+    struct TRCLClient * client = trcl_client_alloc(&config);
+
+    struct TRCLListUserInfo * user_list = client->get_subscribed_users_list(
+        client
+    );
+
+    if (client->get_last_exception_code(client)) {
+        LOG(
+            "\tError:\n\t%s\n",
+            trcl_exception_get_message(client->get_last_exception(client))
+        );
+    }
+    ASSERT_FALSE(client->get_last_exception_code(client));
+
+    LOG("\n\n");
+    log_list_user_info(user_list);
+
+    trcl_model_list_user_info_destroy(user_list);
     client->destroy(client);
     curl_global_cleanup();
 });
