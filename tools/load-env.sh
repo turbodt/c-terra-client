@@ -1,8 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
-SCRIPT_DIR=$( cd -- $( dirname -- "$( dirname -- "${BASH_SOURCE[0]}" )" ) &> /dev/null && pwd )
+
+SCRIPT_DIR=$( dirname -- "${BASH_SOURCE[0]}" )
+PROJECT_DIR=$( cd -- $( dirname -- "${SCRIPT_DIR}" ) &> /dev/null && pwd )
+
 
 export LD_LIBRARY_PATH=""
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${PROJECT_DIR}/lib"
 
-export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${SCRIPT_DIR}/lib"
 
+if [ -f ${PROJECT_DIR}/.env ]
+then
+  export $(cat .env | sed 's/#.*//g' | xargs)
+fi
