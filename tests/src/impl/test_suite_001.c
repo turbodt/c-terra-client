@@ -9,11 +9,13 @@
 
 TEST_H(test_001);
 TEST_H(test_002);
+TEST_H(test_003);
 
 
 static void (*tests[])(void) = {
     TEST_NAME(test_001),
     TEST_NAME(test_002),
+    TEST_NAME(test_003),
     NULL
 };
 
@@ -69,6 +71,28 @@ TEST(test_002, {
     log_list_user_info(user_list);
 
     trcl_model_list_user_info_destroy(user_list);
+    client->destroy(client);
+    curl_global_cleanup();
+});
+
+
+TEST(test_003, {
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    struct TRCLClientConfig const config = get_env_config();
+
+    struct TRCLClient * client = trcl_client_alloc(&config);
+
+    client->deauthenticate_user(client, "1980751b-1a26-4ae9-afed-ee0af824e5db");
+
+    if (client->get_last_exception_code(client)) {
+        LOG(
+            "\tError:\n\t%s\n",
+            trcl_exception_get_message(client->get_last_exception(client))
+        );
+    }
+    ASSERT_FALSE(client->get_last_exception_code(client));
+
     client->destroy(client);
     curl_global_cleanup();
 });
