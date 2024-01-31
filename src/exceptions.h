@@ -21,12 +21,14 @@ TRCLException * trcl_exception_alloc(
     TRCLExceptionCode,
     char const *
 );
+TRCLException * trcl_exception_copy_alloc(TRCLException const *);
 TRCLException * trcl_exception_ok_alloc(void);
 void trcl_exception_destroy(TRCLException *);
 
 TRCLExceptionCode trcl_exception_get_code(TRCLException const *);
 char const * trcl_exception_get_message(TRCLException const *);
 void trcl_exception_set_message(TRCLException *, char const *);
+void trcl_exception_set_own_message(TRCLException *, char const *);
 void trcl_exception_set_ok(TRCLException *);
 
 #endif

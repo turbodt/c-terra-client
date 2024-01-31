@@ -13,27 +13,26 @@ struct TRCLListUserInfo * trcl_client_get_subscribed_users_list(
 
     TRCL_BOOL is_last = FALSE;
     for (size_t page = 0; !is_last; page++) {
-        struct TRCLResponseSubscribedUsersList response;
+        struct TRCLResponse * response;
         response = trcl_request_subscribed_users_list(&pclient->config, page);
 
-        pclient->set_own_exception(pclient, response.exception);
+        pclient->set_exception(pclient, response->get_exception(response));
 
-        if (trcl_exception_get_code(response.exception)) {
+        if (trcl_exception_get_code(response->get_exception(response))) {
             trcl_model_list_user_info_destroy(user_list);
             user_list = NULL;
             is_last = TRUE;
             goto RequestError;
         }
 
-        struct TRCLResponseSubscribedUsersListDetailSuccess * detail = \
-            (struct TRCLResponseSubscribedUsersListDetailSuccess *) response.detail;
+        struct TRCLResponseSubscribedUsersListBodySuccess * body = \
+            (void *)response->get_body(response);
 
-        trcl_model_list_user_info_own_concat(user_list, detail->list);
-        detail->list = NULL;
-
-        is_last = detail->is_last;
+        trcl_model_list_user_info_own_concat(user_list, body->list);
+        body->list = NULL;
+        is_last = body->is_last;
 RequestError:
-        TRCL_FREE(response.detail);
+        response->destroy(response);
     }
 
     return user_list;

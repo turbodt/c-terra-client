@@ -7,6 +7,9 @@
 #include <stdlib.h>
 
 
+#define USER_ID "21b6ac15-2581-4476-a316-b24533c96094"
+
+
 TEST_H(test_001);
 TEST_H(test_002);
 TEST_H(test_003);
@@ -32,10 +35,7 @@ TEST(test_001, {
 
     struct TRCLClient * client = trcl_client_alloc(&config);
 
-    struct TRCLUserInfo * user_info = client->get_user_info(
-        client,
-        "aacab2e7-610f-4714-b309-3b4ff2cf04dd"
-    );
+    struct TRCLUserInfo * user_info = client->get_user_info(client, USER_ID);
 
     ASSERT_FALSE(client->get_last_exception_code(client));
 
@@ -83,7 +83,7 @@ TEST(test_003, {
 
     struct TRCLClient * client = trcl_client_alloc(&config);
 
-    client->deauthenticate_user(client, "1980751b-1a26-4ae9-afed-ee0af824e5db");
+    client->deauthenticate_user(client, USER_ID);
 
     if (client->get_last_exception_code(client)) {
         LOG(

@@ -8,22 +8,14 @@
 #include "../config.h"
 
 
-struct TRCLResponseSubscribedUsersListDetail {};
 
-struct TRCLResponseSubscribedUsersListDetailSuccess {
-    struct TRCLResponseSubscribedUsersListDetail base;
+struct TRCLResponseSubscribedUsersListBodySuccess {
     struct TRCLListUserInfo * list;
     TRCL_BOOL is_last;
 };
 
 
-struct TRCLResponseSubscribedUsersList {
-    struct TRCLException * exception;
-    struct TRCLResponseSubscribedUsersListDetail * detail;
-};
-
-
-struct TRCLResponseSubscribedUsersList trcl_request_subscribed_users_list(
+struct TRCLResponse * trcl_request_subscribed_users_list(
     struct TRCLClientConfig const *,
     size_t
 );

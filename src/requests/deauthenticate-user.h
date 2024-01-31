@@ -8,34 +8,9 @@
 #include "../config.h"
 
 
-struct TRCLResponseDeauthenticateUserDetail {
-    enum TRCLResponseStatus status;
-};
-
-struct TRCLResponseDeauthenticateUserDetailSuccess {
-    struct TRCLResponseDeauthenticateUserDetail base;
-};
-
-struct TRCLResponseDeauthenticateUserDetailFail {
-    struct TRCLResponseDeauthenticateUserDetail base;
-    char const * message;
-};
-
-
-struct TRCLResponseDeauthenticateUser {
-    struct TRCLException * exception;
-    struct TRCLResponseDeauthenticateUserDetail * detail;
-};
-
-
-struct TRCLResponseDeauthenticateUser * trcl_request_deauthenticate_user(
+struct TRCLResponse * trcl_request_deauthenticate_user(
     struct TRCLClientConfig const *,
     TRCLUserId
-);
-
-
-void trcl_response_deauthenticate_user_destroy(
-    struct TRCLResponseDeauthenticateUser *
 );
 
 
