@@ -13,6 +13,10 @@ typedef struct ClientProtected {
     Client base;
     ClientConfig config;
     TRCLException * last_exception;
+    struct ClientProtected * (*set_exception)(
+        struct ClientProtected *,
+        TRCLException const *
+    );
     struct ClientProtected * (*set_own_exception)(
         struct ClientProtected *,
         TRCLException *

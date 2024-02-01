@@ -7,6 +7,9 @@
 #include <stdlib.h>
 
 
+#define USER_ID "0e86fbd5-1fd4-412a-a100-5c78d4a04c05"
+
+
 TEST_H(test_001);
 TEST_H(test_002);
 TEST_H(test_003);
@@ -32,11 +35,14 @@ TEST(test_001, {
 
     struct TRCLClient * client = trcl_client_alloc(&config);
 
-    struct TRCLUserInfo * user_info = client->get_user_info(
-        client,
-        "aacab2e7-610f-4714-b309-3b4ff2cf04dd"
-    );
+    struct TRCLUserInfo * user_info = client->get_user_info(client, USER_ID);
 
+    if (client->get_last_exception_code(client)) {
+        LOG(
+            "%s\n",
+            trcl_exception_get_message(client->get_last_exception(client))
+        );
+    }
     ASSERT_FALSE(client->get_last_exception_code(client));
 
     LOG("\n\n");
@@ -61,7 +67,7 @@ TEST(test_002, {
 
     if (client->get_last_exception_code(client)) {
         LOG(
-            "\tError:\n\t%s\n",
+            "%s\n",
             trcl_exception_get_message(client->get_last_exception(client))
         );
     }
@@ -83,11 +89,11 @@ TEST(test_003, {
 
     struct TRCLClient * client = trcl_client_alloc(&config);
 
-    client->deauthenticate_user(client, "1980751b-1a26-4ae9-afed-ee0af824e5db");
+    client->deauthenticate_user(client, USER_ID);
 
     if (client->get_last_exception_code(client)) {
         LOG(
-            "\tError:\n\t%s\n",
+            "%s\n",
             trcl_exception_get_message(client->get_last_exception(client))
         );
     }

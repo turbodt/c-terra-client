@@ -16,6 +16,11 @@ struct curl_slist * curl_slist_append_kv(
     char const *,
     char const *
 );
+char * curl_uri_alloc(
+    char const *,
+    char const *,
+    char const * const *
+);
 size_t curl_response_write_text(void *, size_t, size_t, void *);
 size_t curl_response_write_json(void *, size_t, size_t, void *);
 

@@ -2,9 +2,19 @@
 #define TRCL_REQUESTS_SHARED_H
 
 
-enum TRCLResponseStatus {
-    TRCL_RESPONSE_STATUS__SUCCESS,
-    TRCL_RESPONSE_STATUS__FAIL,
+#include "../exceptions.h"
+
+
+struct TRCLResponse {
+    struct TRCLException const * (*get_exception)(struct TRCLResponse const *);
+    long int (*get_status_code)(struct TRCLResponse const *);
+    void const * (*get_body)(struct TRCLResponse const *);
+    void (*destroy)(struct TRCLResponse *);
+};
+
+
+struct TRCLResponseBodyFail {
+    char const * message;
 };
 
 

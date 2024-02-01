@@ -13,6 +13,10 @@ static ClientProtected * trcl_client_set_own_exception(
     ClientProtected *,
     TRCLException *
 );
+static ClientProtected * trcl_client_set_exception(
+    ClientProtected *,
+    TRCLException const *
+);
 
 
 Client * trcl_client_alloc(ClientConfig const * config) {
@@ -22,6 +26,7 @@ Client * trcl_client_alloc(ClientConfig const * config) {
     client->config = *config;
     client->last_exception = trcl_exception_ok_alloc();
     client->set_own_exception = trcl_client_set_own_exception;
+    client->set_exception = trcl_client_set_exception;
     client->base = (Client) {
         .destroy = trcl_client_destroy,
         .get_last_exception = trcl_client_get_last_exception,
@@ -60,5 +65,15 @@ struct ClientProtected * trcl_client_set_own_exception(
 ) {
     trcl_exception_destroy(client->last_exception);
     client->last_exception = e;
+    return client;
+};
+
+
+struct ClientProtected * trcl_client_set_exception(
+    ClientProtected * client,
+    TRCLException const *e
+) {
+    trcl_exception_destroy(client->last_exception);
+    client->last_exception = trcl_exception_copy_alloc(e);
     return client;
 };

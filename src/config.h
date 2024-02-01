@@ -12,5 +12,8 @@
 #define TRCL_BOOL unsigned char
 #endif
 
+#ifndef TRCL_REQUEST_PER_PAGE
+#define TRCL_REQUEST_PER_PAGE "50"
+#endif
 
 #endif

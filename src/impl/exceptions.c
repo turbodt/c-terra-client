@@ -27,6 +27,11 @@ TRCLException * trcl_exception_alloc(
 };
 
 
+inline TRCLException * trcl_exception_copy_alloc(TRCLException const *src) {
+    return trcl_exception_alloc(src->code, src->message);
+};
+
+
 TRCLException * trcl_exception_ok_alloc(void) {
     TRCLException * e = trcl_exception_alloc(
         TRCL_EXCEPTION__OK,
@@ -71,7 +76,16 @@ inline void trcl_exception_set_message(
     TRCLException *e,
     char const *message
 ) {
-    e->message = str_set_alloc((char *) e->message, message);
+    char * message_copy = str_set_alloc((char *) e->message, message);
+    trcl_exception_set_own_message(e, message_copy);
+};
+
+
+inline void trcl_exception_set_own_message(
+    TRCLException *e,
+    char const *message
+) {
+    e->message = message;
 };
 
 

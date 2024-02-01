@@ -8,10 +8,7 @@
 #include "../config.h"
 
 
-struct TRCLResponseUserInfoDetail {};
-
-struct TRCLResponseUserInfoDetailSuccess {
-    struct TRCLResponseUserInfoDetail base;
+struct TRCLResponseUserInfoBodySuccess {
     TRCLUserId user_id;
     TRCLReferenceId reference_id;
     TRCL_BOOL is_active;
@@ -22,17 +19,10 @@ struct TRCLResponseUserInfoDetailSuccess {
 };
 
 
-struct TRCLResponseUserInfo {
-    struct TRCLException * exception;
-    //enum TRCLResponseStatus status;
-    //TRCL_BOOL is_authenticated;
-    struct TRCLResponseUserInfoDetail * detail;
-};
-
-
-struct TRCLResponseUserInfo trcl_request_user_info(
+struct TRCLResponse * trcl_request_user_info(
     struct TRCLClientConfig const *,
     TRCLUserId
 );
+
 
 #endif
