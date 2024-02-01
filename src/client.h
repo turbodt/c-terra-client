@@ -24,7 +24,10 @@ struct TRCLClient {
 };
 
 
-struct TRCLClient * trcl_client_alloc(struct TRCLClientConfig const*);
+struct TRCLClient * trcl_client_alloc(
+    struct TRCLClientConfig const*,
+    struct TRCLException **
+);
 
 
 #endif

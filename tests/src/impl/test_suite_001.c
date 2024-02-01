@@ -7,7 +7,7 @@
 #include <stdlib.h>
 
 
-#define USER_ID "0e86fbd5-1fd4-412a-a100-5c78d4a04c05"
+#define USER_ID "abd2582b-ba7f-48b0-9e95-a776f5023dbe"
 
 
 TEST_H(test_001);
@@ -29,11 +29,12 @@ void (*test_suite_001_get_test(size_t index))(void) {
 
 
 TEST(test_001, {
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct TRCLClientConfig const config = get_env_config();
 
-    struct TRCLClient * client = trcl_client_alloc(&config);
+    struct TRCLException * exception = NULL;
+    struct TRCLClient * client = trcl_client_alloc(&config, &exception);
+    ASSERT_FALSE(trcl_exception_get_code(exception));
 
     struct TRCLUserInfo * user_info = client->get_user_info(client, USER_ID);
 
@@ -50,16 +51,16 @@ TEST(test_001, {
 
     trcl_model_user_info_destroy(user_info);
     client->destroy(client);
-    curl_global_cleanup();
 });
 
 
 TEST(test_002, {
-    curl_global_init(CURL_GLOBAL_ALL);
 
     struct TRCLClientConfig const config = get_env_config();
 
-    struct TRCLClient * client = trcl_client_alloc(&config);
+    struct TRCLException * exception = NULL;
+    struct TRCLClient * client = trcl_client_alloc(&config, &exception);
+    ASSERT_FALSE(trcl_exception_get_code(exception));
 
     struct TRCLListUserInfo * user_list = client->get_subscribed_users_list(
         client
@@ -78,16 +79,15 @@ TEST(test_002, {
 
     trcl_model_list_user_info_destroy(user_list);
     client->destroy(client);
-    curl_global_cleanup();
 });
 
 
 TEST(test_003, {
-    curl_global_init(CURL_GLOBAL_ALL);
-
     struct TRCLClientConfig const config = get_env_config();
 
-    struct TRCLClient * client = trcl_client_alloc(&config);
+    struct TRCLException * exception = NULL;
+    struct TRCLClient * client = trcl_client_alloc(&config, &exception);
+    ASSERT_FALSE(trcl_exception_get_code(exception));
 
     client->deauthenticate_user(client, USER_ID);
 
@@ -100,5 +100,4 @@ TEST(test_003, {
     ASSERT_FALSE(client->get_last_exception_code(client));
 
     client->destroy(client);
-    curl_global_cleanup();
 });
