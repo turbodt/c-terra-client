@@ -40,19 +40,13 @@ char * trcl_json_error_to_str_alloc(json_error_t const *json_error) {
     snprintf(
         message,
         message_len,
-        "Json error on line %d:%d. %s",
+        "Json error on line %d:%d. \"%s\". Source: \"%s\"\n",
         json_error->line,
         json_error->column,
-        json_error->text
+        json_error->text,
+        json_error->source
     );
     return message;
-};
-
-
-void trcl_response_destroy(Response * response) {
-    ResponseProtected * presponse = (ResponseProtected *) response;
-    trcl_exception_destroy(presponse->exception);
-    TRCL_FREE(presponse);
 };
 
 
@@ -96,8 +90,16 @@ BodyFail * body_fail_alloc(
 
 
 void body_fail_destroy(BodyFail *body) {
+    RETURN_IF_NULL(body);
     str_destroy(body->message);
     TRCL_FREE(body);
+};
+
+
+void trcl_response_destroy(Response * response) {
+    ResponseProtected * presponse = (ResponseProtected *) response;
+    trcl_exception_destroy(presponse->exception);
+    TRCL_FREE(presponse);
 };
 
 

@@ -10,7 +10,7 @@
 #include <string.h>
 
 
-#define PER_PAGE  30ul
+#define PER_PAGE  "30"
 
 
 typedef struct TRCLResponseSubscribedUsersListBodySuccess SuccessBody;
@@ -23,12 +23,6 @@ static ResponseProtected * custom_response_alloc(void);
 static void custom_response_destroy(Response *);
 static SuccessBody * body_success_alloc(json_t const*, struct TRCLException **);
 static void body_success_destroy(SuccessBody *);
-static TRCLException * perform_request_alloc(
-    struct TRCLClientConfig const *,
-    size_t,
-    json_t **,
-    long int *
-);
 
 
 Response * trcl_request_subscribed_users_list(
@@ -39,11 +33,21 @@ Response * trcl_request_subscribed_users_list(
 
     json_t * json_content = NULL;
 
-    response->exception = perform_request_alloc(
+    char page_str[21];
+    snprintf(page_str, sizeof(page_str), "%zu", page);
+    response->exception = trcl_perform_request_alloc(
         config,
-        page,
         &json_content,
-        &response->status_code
+        &response->status_code,
+        "GET",
+        "/subscriptions",
+        (char const * const []) {
+            "page",
+            page_str,
+            "per_page",
+            PER_PAGE,
+            NULL
+        }
     );
 
     if (trcl_exception_get_code(response->exception)) {
@@ -167,96 +171,4 @@ void body_success_destroy(SuccessBody * success_body) {
     RETURN_IF_NULL(success_body);
     trcl_model_list_user_info_destroy(success_body->list);
     TRCL_FREE(success_body);
-};
-
-
-TRCLException * perform_request_alloc(
-    struct TRCLClientConfig const * config,
-    size_t page,
-    json_t ** json_response_content,
-    long int * status_code
-) {
-    static char const path[] = "subscriptions";
-
-    TRCLException * exception;
-
-    CURL *curl = curl_easy_init();
-    TRCL_ASSERT_ALLOC_OR(curl, {
-        exception = trcl_exception_alloc(
-            TRCL_EXCEPTION__UNKNOWN,
-            "Error at curl_easy_init()"
-        );
-        goto ErrorCurl;
-    });
-
-    // base_url + path + "?per_page=XXXX&page=" + page
-    size_t len_url = strlen(config->base_url) + strlen(path) + 20 + 12;
-    char * url = str_alloc(len_url);
-
-    snprintf(
-        url,
-        len_url + 1,
-        "%s%s?per_page=%zu&page=%zu",
-        config->base_url,
-        path,
-        PER_PAGE,
-        page
-    );
-
-    curl_write_char_buffer_t buffer = {.data = NULL, .size=0};
-
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_response_write_text);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &buffer);
-
-    struct curl_slist *headers = NULL;
-    headers = curl_slist_append_kv(headers, "accept", "application/json");
-    headers = curl_slist_append_kv(headers, "dev-id", config->dev_id);
-    headers = curl_slist_append_kv(headers, "x-api-key", config->api_key);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-    CURLcode status = curl_easy_perform(curl);
-    if (status != 0) {
-        char message[1024];
-        sprintf(
-            message,
-            "Error performing request to `%s`:\n%s\n",
-            url,
-            curl_easy_strerror(status)
-        );
-        exception = trcl_exception_alloc(
-            TRCL_EXCEPTION__CANNOT_REQUEST,
-            message
-        );
-        goto ErrorUnablePerformRequest;
-    }
-
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, status_code);
-
-    json_error_t error;
-    *json_response_content = json_loads(buffer.data, 0, &error);
-    if(IS_NULL(*json_response_content)) {
-        char message[1024];
-        sprintf(
-            message,
-            "Error performing request to `%s`:\n%s\n",
-            url,
-            curl_easy_strerror(status)
-        );
-        exception = trcl_exception_alloc(
-            TRCL_EXCEPTION__UNEXPECTED_RESPONSE_BODY,
-            message
-        );
-        goto ErrorParsingCurlJson;
-    }
-    exception = trcl_exception_ok_alloc();
-
-ErrorParsingCurlJson:
-    TRCL_FREE(buffer.data);
-ErrorUnablePerformRequest:
-    curl_slist_free_all(headers);
-    curl_easy_cleanup(curl);
-    str_destroy(url);
-ErrorCurl:
-    return exception;
 };
