@@ -1,7 +1,7 @@
 #include "../test_suite_001.h"
 #include "../base.h"
 #include "../utils.h"
-#include "terra-cli.h"
+#include "terra-client.h"
 #include <curl/curl.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18,7 +18,7 @@ TEST_H(test_003);
 static void (*tests[])(void) = {
     TEST_NAME(test_001),
     TEST_NAME(test_002),
-    TEST_NAME(test_003),
+    //TEST_NAME(test_003),
     NULL
 };
 

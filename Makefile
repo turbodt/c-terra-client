@@ -1,4 +1,4 @@
-LIB_NAME = terra-cli
+LIB_NAME = c-terra-client
 EXTERNAL_DIR ?= $(realpath ./external)
 SRC_DIR = $(realpath ./src)
 
