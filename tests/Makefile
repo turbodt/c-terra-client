@@ -8,7 +8,7 @@ EXTERNAL_INCLUDES = \
 	-I$(ROOT_DIR)/include
 
 EXTERNAL_LIBRARIES = \
-	-L$(ROOT_DIR)/lib -lterra-cli \
+	-L$(ROOT_DIR)/lib -lc-terra-client \
 	$(GLOBAL_LIBS)
 
 LOCAL_INCLUDES = \
