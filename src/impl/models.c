@@ -5,6 +5,10 @@
 
 static void trcl_model_user_info_init(struct TRCLUserInfo *);
 static void trcl_model_user_info_clear(struct TRCLUserInfo *);
+void trcl_model_user_info_copy(
+    struct TRCLUserInfo * const,
+    struct TRCLUserInfo const * const
+);
 static void trcl_model_list_user_info_resize(
     struct TRCLListUserInfo *,
     size_t
@@ -18,6 +22,13 @@ struct TRCLUserInfo * trcl_model_user_info_alloc(void) {
     return model;
 };
 
+struct TRCLUserInfo * trcl_model_user_info_copy_alloc(
+    struct TRCLUserInfo const *src
+) {
+    struct TRCLUserInfo * model = trcl_model_user_info_alloc();
+    trcl_model_user_info_copy(model, src);
+    return model;
+};
 
 void trcl_model_user_info_destroy(struct TRCLUserInfo *model) {
     RETURN_IF_NULL(model);
@@ -43,6 +54,15 @@ void trcl_model_list_user_info_destroy(struct TRCLListUserInfo *model) {
     RETURN_IF_NULL(model);
     trcl_model_list_user_info_resize(model, 0);
     TRCL_FREE(model);
+};
+
+
+struct TRCLUserInfo * trcl_model_list_user_info_append(
+    struct TRCLListUserInfo * list,
+    struct TRCLUserInfo const * model
+) {
+    struct TRCLUserInfo * new_model = trcl_model_user_info_copy_alloc(model);
+    return trcl_model_list_user_info_own_append(list, new_model);
 };
 
 
@@ -75,6 +95,22 @@ void trcl_model_list_user_info_own_concat(
 };
 
 
+void trcl_model_user_info_move(
+    struct TRCLUserInfo * const dst,
+    struct TRCLUserInfo * const src
+) {
+    trcl_model_user_info_clear(dst);
+    dst->is_active = src->is_active;
+    dst->user_id = src->user_id;
+    dst->reference_id = src->reference_id;
+    dst->provider = src->provider;
+    dst->scopes = src->scopes;
+    dst->created_at = src->created_at;
+    dst->last_webhook_update_at = src->last_webhook_update_at;
+    trcl_model_user_info_init(src);
+};
+
+
 void trcl_model_user_info_init(struct TRCLUserInfo *model) {
     RETURN_IF_NULL(model);
     *model = (struct TRCLUserInfo){
@@ -100,19 +136,18 @@ void trcl_model_user_info_clear(struct TRCLUserInfo *model) {
 };
 
 
-void trcl_model_user_info_move(
+void trcl_model_user_info_copy(
     struct TRCLUserInfo * const dst,
-    struct TRCLUserInfo * const src
+    struct TRCLUserInfo const * const src
 ) {
     trcl_model_user_info_clear(dst);
     dst->is_active = src->is_active;
-    dst->user_id = src->user_id;
-    dst->reference_id = src->reference_id;
-    dst->provider = src->provider;
-    dst->scopes = src->scopes;
-    dst->created_at = src->created_at;
-    dst->last_webhook_update_at = src->last_webhook_update_at;
-    trcl_model_user_info_init(src);
+    dst->user_id = str_copy_alloc(src->user_id);
+    dst->reference_id = str_copy_alloc(src->reference_id);
+    dst->provider = str_copy_alloc(src->provider);
+    dst->scopes = str_copy_alloc(src->scopes);
+    dst->created_at = str_copy_alloc(src->created_at);
+    dst->last_webhook_update_at = str_copy_alloc(src->last_webhook_update_at);
 };
 
 

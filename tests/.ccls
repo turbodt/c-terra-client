@@ -1,4 +1,5 @@
 clang
 %c -I../include
 %c -I../external/curl/include
+%c -I../external/jansson/include
 -std=c11
